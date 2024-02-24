@@ -35,10 +35,32 @@ func addOne(num int) {
 	println("increase num : ", num, "in addOne function")
 }
 
+// 포인터를 이용해서 값을 변경할 수 있다.
 func addOneByPointer(num *int) {
 	println("addOneByPointer 함수 호출 num: ", *num)
 	*num += 1
 	println("increase num : ", *num, "in addOneByPointer function")
+}
+
+// Calculator /**
+// 메소드 2024-02-24
+// 메소드는 구조체에 속한 함수이다.
+//
+//	func (리시버) 메소드명(매개변수 매개변수타입) 반환타입 {
+//		코드
+//		return 반환값
+//	}
+type Calculator struct {
+	X int
+}
+
+func (c Calculator) add(y int) int {
+	return c.X + y
+}
+
+// 리시버를 포인터로 받으면 값이 변경된다.
+func (c *Calculator) addByPointer(y int) {
+	c.X += y
 }
 
 func main() {
@@ -57,10 +79,10 @@ func main() {
 	// 포인터로 값 변경
 	fmt.Println(" ======= 포인터로 값 변경 =======")
 	num := 1
-	fmt.Println("before num: %d", num)
+	fmt.Printf("before num: %d\n", num)
 	numAddress := &num
 	*numAddress = 2
-	fmt.Println("after num: %d", num)
+	fmt.Printf("after num: %d\n", num)
 
 	fmt.Println(" ======= 주소타입으로 값 변경 =======")
 	var numPointer *int = &num // int 의 포인터를 만들어서 num 의 주소를 할당
@@ -94,5 +116,17 @@ func main() {
 	fmt.Println("before paramNum: ", paramNum)
 	addOneByPointer(&paramNum)
 	fmt.Println("after paramNum: ", paramNum)
+
+	// 메소드 호출
+	fmt.Println(" ======= 메소드 호출 =======")
+	fmt.Println(" ======= 리시버를 구조체로 받으면 값이 변경되지 않는다. =======")
+	calc := Calculator{10}
+	val := calc.add(20)
+	fmt.Println("val: ", val)
+	fmt.Println("calc.X: ", calc.X)
+
+	fmt.Println(" ======= 리시버를 포인터로 받으면 값이 변경된다. =======")
+	calc.addByPointer(20)
+	fmt.Println("calc.X: ", calc.X)
 
 }
