@@ -63,6 +63,38 @@ func (c *Calculator) addByPointer(y int) {
 	c.X += y
 }
 
+// 인터페이스 2024-02-24
+type Ducky interface {
+	DuckSound() string
+	DuckWalk() string
+	isSwim() string
+}
+
+type Bird struct {
+	name string
+}
+
+func (b Bird) DuckSound() string {
+	return "꽥꽥"
+}
+
+func (b Bird) DuckWalk() string {
+	return "뒤뚱뒤뚱"
+}
+
+func (b Bird) isSwim() string {
+	if b.name == "오리" {
+		return "있다."
+	} else {
+		return "없다."
+	}
+}
+
+// 빈 인터페이스를 매개변수로 하면, 어떤 값이든 받을 수 있다.
+func typeCheck(i interface{}) {
+	fmt.Printf("%T\n", i)
+}
+
 func main() {
 
 	// 구조체 정의
@@ -128,5 +160,16 @@ func main() {
 	fmt.Println(" ======= 리시버를 포인터로 받으면 값이 변경된다. =======")
 	calc.addByPointer(20)
 	fmt.Println("calc.X: ", calc.X)
+
+	// 인터페이스
+	duck := Bird{name: "오리"}
+	fmt.Printf("%s 는 %s 하고 울며, %s 걸으며, 수영을 할 수 %s \n", duck.name, duck.DuckSound(), duck.DuckWalk(), duck.isSwim())
+
+	var n1 int8 = 1
+	var n2 int16 = 2
+	var n3 int32 = 3
+	typeCheck(n1)
+	typeCheck(n2)
+	typeCheck(n3)
 
 }
