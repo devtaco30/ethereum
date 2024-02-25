@@ -2,7 +2,9 @@ package main
 
 import (
 	"encoding/json"
+	"errors"
 	"fmt"
+	"sync"
 )
 
 // 함수 2024-02-24
@@ -129,6 +131,39 @@ func numbers(nums ...int) {
 // 익명함수 -> 데이터타입처럼 파라미터로 던질 수도 있다.
 //익명 함수는 포인터로도 사용할 수 있다.
 
+// 에러 처리 2024-02-25
+func divide(x, y int) int {
+	return x / y
+}
+
+func divideWithHandleError(x, y int) (int, error) {
+	if y == 0 {
+		return 0, fmt.Errorf("Error: divide by zero")
+	}
+	return x / y, nil
+}
+
+// goroutine 2024-02-25
+func printHorizon() {
+	for i := 0; i < 300; i++ {
+		fmt.Print("==")
+	}
+}
+
+// goroutine 2024-02-25
+func printVertical() {
+	for i := 0; i < 300; i++ {
+		fmt.Print("||")
+	}
+}
+
+func printLine(l string, w *sync.WaitGroup) {
+	defer w.Done()
+	for i := 0; i < 300; i++ {
+		fmt.Print(l)
+	}
+}
+
 func main() {
 
 	// 구조체 정의
@@ -243,4 +278,72 @@ func main() {
 	}()
 	fmt.Println("i: ", i)
 
+	// 에러 처리 2024-02-25
+	// go lang 에서의 error (exception) -> panic, recover
+	//d := divide(10, 0)
+	//fmt.Println("d: ", d)
+
+	//d2, err := divideWithHandleError(10, 0)
+	//fmt.Println("d2: ", d2, "err: ", err)
+
+	// 에러 출력
+	fmt.Println(errors.New("new Error Message"))
+	// 다른 방식
+	fmt.Println(fmt.Errorf("Error: %s", "new Error Message"))
+
+	d3, err2 := divideWithHandleError(10, 2)
+
+	if err2 != nil {
+		panic("Error: " + err2.Error()) // panic 이 발생하면 프로그램이 종료된다.
+	} else {
+		fmt.Println("d3: ", d3)
+	}
+
+	// panic -> recover 호출
+	defer func() {
+		r := recover() // recover 는 panic 이 발생했을 때, 프로그램이 종료되지 않고, 호출된다.
+		fmt.Println(r)
+		fmt.Println("recovered from panic")
+	}()
+	// 얘가 실행되어야 위에 recover 가 출
+	//panic("panic: somthing went wrong")
+
+	//goroutine -> go runtime 에서 작동하는 경량스레드 , coroutine 같은 것
+	fmt.Println(" ======= goroutine =======")
+	// go 키워드를 쓰면 goroutine 으로 실행된다.
+	printHorizon()
+	go printVertical()
+
+	// main 함수가 종료되면, goroutine 도 종료된다.
+	//S//go printVertical()
+
+	// main 함수, printHorizon 이 실행되면 main 이 종료되기 때문에 printVertical 은 실행되지 않는다.
+	//printHorizon()
+	//go printVertical()
+
+	var wg sync.WaitGroup
+	wg.Add(2)
+	go printLine("==", &wg)
+	go printLine("||", &wg)
+	wg.Wait()
+
+	// channel -> goroutine 간의 데이터를 주고 받을 수 있는 통로
+	n := 0
+	ch := make(chan bool)
+
+	fmt.Print("Enter a number: ")
+	fmt.Scan(&n)
+	go checkOne(n, ch)
+
+	res := <-ch
+	fmt.Println(res)
+
+}
+
+func checkOne(num int, c chan bool) {
+	if num == 1 {
+		c <- true
+	} else {
+		c <- false
+	}
 }
