@@ -95,6 +95,40 @@ func typeCheck(i interface{}) {
 	fmt.Printf("%T\n", i)
 }
 
+// 패키지
+// 패키지는 코드를 구조화하고 재사용하기 위한 방법이다.
+
+// defer : 자신을 둘러싼 함수가 종료할 때 까지 실행을 연기한다.
+func b() {
+	for i := 0; i < 4; i++ {
+		defer fmt.Println(i)
+	}
+}
+
+// 주의점 : 함수의 매개변수는 호출시 이 값을 '복사' 한다.
+func a() {
+	i := 0
+	defer fmt.Println(i)
+	i++
+}
+
+// defer는 반환된 값을 읽고, 반환값을 지정한 변수에 할당한다.
+func c() (i int) {
+	defer func() { i++ }()
+	return 1
+}
+
+// 가변 인자
+// -> 슬라이스로 받는다.
+func numbers(nums ...int) {
+	fmt.Println(nums)
+	fmt.Printf("%T \n", nums)
+}
+
+// 함수 리터럴 (이름 없는 함수 -> 익명함수)
+// 익명함수 -> 데이터타입처럼 파라미터로 던질 수도 있다.
+//익명 함수는 포인터로도 사용할 수 있다.
+
 func main() {
 
 	// 구조체 정의
@@ -171,5 +205,42 @@ func main() {
 	typeCheck(n1)
 	typeCheck(n2)
 	typeCheck(n3)
+
+	// defer -> stack 구조로 쌓인다.
+	fmt.Println(" ======= defer =======")
+	defer fmt.Println("마지막 실행")
+	defer fmt.Println("세 번째 실행")
+	defer fmt.Println("두 번째 실행")
+	fmt.Println("첫 번째 실행")
+
+	fmt.Println(" ======= defer for =======")
+	b()
+
+	fmt.Println(" ======= defer는 매개변수를 복사한다 =======")
+	a()
+
+	fmt.Println(" ======= defer는 반환된 값을 읽고, 반환값을 지정한 변수에 할당한다. =======")
+	c()
+
+	fmt.Println(" ======= 가변 인자 =======")
+	numbers(1, 2, 3, 4, 5) // -> retunr 값이 [] slice 로 된다.
+
+	// 함수 리터럴
+	fmt.Println(" ======= 함수 리터럴 =======")
+	f := func() {
+		fmt.Println("Hello, World!")
+	}
+	f()
+
+	func() {
+		fmt.Println("Hello, World!")
+	}() // -> 익명함수를 바로 호출할 수 있다.
+
+	fmt.Println(" ======= 익명함수를 파라미터로 넘기기 =======")
+	i := 0
+	func() { // 여기서는 값이 증가한다. 일반 함수에 포인터형태로 넘겨야만 가능하던 것을, 익명함수는 가능하게 한다.
+		i++
+	}()
+	fmt.Println("i: ", i)
 
 }
