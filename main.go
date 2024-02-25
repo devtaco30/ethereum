@@ -177,18 +177,31 @@ func main() {
 	data, _ := json.Marshal(v)
 	fmt.Println(string(data))
 
+	// pointer
+	// 메모리 접근 , 주소 접근
+	fmt.Println()
+	fmt.Println(" ======= 포인터 =======")
+	num := 1
+	fmt.Println(&num)  // memory address
+	numPointer := &num // *int 는 주소를 담는 타입
+	fmt.Println(num)
+	fmt.Println(*numPointer) // 주소타입에 * 을 붙이면, 그 value 를 가져온다
+
+	*numPointer = 2 // call by reference 로 값을 바꾸면, 당연히 바뀐다.
+	fmt.Println(num)
+
 	// 포인터로 값 변경
 	fmt.Println(" ======= 포인터로 값 변경 =======")
-	num := 1
-	fmt.Printf("before num: %d\n", num)
-	numAddress := &num
+	num1 := 1
+	fmt.Printf("before num: %d\n", num1)
+	numAddress := &num1
 	*numAddress = 2
-	fmt.Printf("after num: %d\n", num)
+	fmt.Printf("after num: %d\n", num1)
 
 	fmt.Println(" ======= 주소타입으로 값 변경 =======")
-	var numPointer *int = &num // int 의 포인터를 만들어서 num 의 주소를 할당
+	var numPointer1 *int = &num // int 의 포인터를 만들어서 num 의 주소를 할당
 	fmt.Println("num address: ", &num)
-	fmt.Println("num value by reference : ", *numPointer)
+	fmt.Println("num value by reference : ", *numPointer1)
 
 	// 함수 호출
 	fmt.Println(" ======= add 함수 호출 =======")
